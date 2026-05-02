@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор Snippets - Code Snippets Inserter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fadeIn': 'fadeIn 0.3s ease-out',
+                        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes pulse-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .copied {
+            animation: pulse-scale 0.5s;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 p-4 sm:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Language Switcher -->
+        <div class="flex justify-end gap-2 mb-4">
+            <button id="lang-en" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all text-sm">
+                🇬🇧 EN
+            </button>
+            <button id="lang-uk" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all text-sm">
+                🇺🇦 UA
+            </button>
+            <button id="lang-ru" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all text-sm">
+                🇷🇺 RU
+            </button>
+        </div>
+
+        <!-- Header -->
+        <header class="text-center mb-8 sm:mb-12">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-white via-sky-200 to-sky-400 bg-clip-text text-transparent">
+                <span data-i18n="title">Snippet Generator</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-slate-400" data-i18n="subtitle">
+                Create snippets for Code Snippets Inserter VS Code extension
+            </p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Left Card - Form -->
+            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-8 hover:border-sky-500/50 transition-all duration-300">
+                <h2 class="text-2xl font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-6 flex items-center gap-2" data-i18n="formTitle">
+                    ✏️ Enter snippet data
+                </h2>
+                
+                <!-- Snippet Name -->
+                <div class="mb-6">
+                    <label for="snippetName" class="block text-sm font-semibold text-slate-300 mb-2" data-i18n="nameLabel">
+                        Snippet name:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="snippetName" 
+                        placeholder="e.g.: HTML5 Template"
+                        class="w-full px-4 py-3 bg-slate-800 border-2 border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 outline-none transition-all duration-200"
+                    >
+                    <p class="mt-2 text-xs text-slate-500 italic" data-i18n="nameHint">Unique name for your snippet</p>
+                </div>
+
+                <!-- Snippet Code -->
+                <div class="mb-6">
+                    <label for="snippetCode" class="block text-sm font-semibold text-slate-300 mb-2" data-i18n="codeLabel">
+                        Snippet code:
+                    </label>
+                    <textarea 
+                        id="snippetCode" 
+                        placeholder="Enter your code here...&#10;Use ${1:placeholder} for tab stops&#10;New lines will be automatically escaped"
+                        class="w-full px-4 py-3 bg-slate-800 border-2 border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 outline-none transition-all duration-200 font-mono text-sm min-h-[180px] resize-y"
+                    ></textarea>
+                    <p class="mt-2 text-xs text-slate-500 italic" data-i18n="codeHint">Regular code - special characters will be escaped automatically</p>
+                </div>
+
+                <!-- Snippet Description -->
+                <div class="mb-6">
+                    <label for="snippetDescription" class="block text-sm font-semibold text-slate-300 mb-2" data-i18n="descLabel">
+                        Description:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="snippetDescription" 
+                        placeholder="e.g.: Basic HTML5 template"
+                        class="w-full px-4 py-3 bg-slate-800 border-2 border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 outline-none transition-all duration-200"
+                    >
+                    <p class="mt-2 text-xs text-slate-500 italic" data-i18n="descHint">Short description of what the snippet does</p>
+                </div>
+
+                <!-- Buttons -->
+                <button 
+                    id="btnGenerateSnippet"
+                    class="w-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-sky-500/30 hover:shadow-sky-500/50 transform hover:-translate-y-0.5 transition-all duration-200 mb-3"
+                    data-i18n="btnGenerate"
+                >
+                    🚀 Generate JSON
+                </button>
+                <button 
+                    id="btnClearForm"
+                    class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-300 font-semibold py-3 px-6 rounded-xl shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
+                    data-i18n="btnClear"
+                >
+                    🗑️ Clear form
+                </button>
+
+                <!-- Examples -->
+                <div class="mt-6">
+                    <h3 class="text-sm font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-3" data-i18n="examplesTitle">
+                        Examples:
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span data-example="html" class="inline-block bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-sky-500/50 text-slate-300 hover:text-sky-400 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium">
+                            HTML Template
+                        </span>
+                        <span data-example="php" class="inline-block bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-sky-500/50 text-slate-300 hover:text-sky-400 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium">
+                            PHP Class
+                        </span>
+                        <span data-example="react" class="inline-block bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-sky-500/50 text-slate-300 hover:text-sky-400 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium">
+                            React Component
+                        </span>
+                        <span data-example="vue" class="inline-block bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-sky-500/50 text-slate-300 hover:text-sky-400 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium">
+                            Vue Component
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Placeholder Info -->
+                <div class="mt-6 bg-sky-950/50 border border-sky-900/50 p-4 rounded-xl backdrop-blur-sm">
+                    <h3 class="font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-2" data-i18n="placeholdersTitle">💡 About Placeholders</h3>
+                    <p class="text-sm text-slate-400 mb-1">
+                        <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">${1:назва}</code> <span data-i18n="placeholder1">- first tab position</span>
+                    </p>
+                    <p class="text-sm text-slate-400 mb-1">
+                        <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">${2:значення}</code> <span data-i18n="placeholder2">- second position</span>
+                    </p>
+                    <p class="text-sm text-slate-400">
+                        <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">${0}</code> <span data-i18n="placeholder0">- final cursor position</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Card - Result -->
+            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-8 hover:border-sky-500/50 transition-all duration-300">
+                <h2 class="text-2xl font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-6 flex items-center gap-2" data-i18n="resultTitle">
+                    📋 JSON Result
+                </h2>
+                
+                <!-- Result Area -->
+                <div class="relative">
+                    <div id="result" class="bg-slate-950/50 border-2 border-slate-800 rounded-xl p-4 pt-14 font-mono text-xs sm:text-sm min-h-[200px] max-h-[400px] overflow-y-auto whitespace-pre-wrap break-all">
+                        <button 
+                            id="copyBtn" 
+                            style="display: none;"
+                            class="absolute top-3 right-3 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg shadow-sky-500/30 hover:shadow-sky-500/50 transform hover:-translate-y-0.5 transition-all duration-200 z-10 text-sm"
+                        >
+                            📋 Копіювати
+                        </button>
+                        <span class="text-slate-600 italic flex items-center justify-center h-full" data-i18n="resultEmpty">JSON will appear here after generation...</span>
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div 
+                    id="successMsg" 
+                    style="display: none;"
+                    class="mt-4 bg-emerald-950/50 border border-emerald-800 text-emerald-400 px-4 py-3 rounded-xl animate-fadeIn backdrop-blur-sm"
+                >
+                    ✅ Copied to clipboard!
+                </div>
+
+                <!-- Tips -->
+                <div class="mt-6 bg-amber-950/30 border border-amber-900/50 p-4 rounded-xl backdrop-blur-sm">
+                    <h3 class="font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-3 text-lg" data-i18n="tipsTitle">💡 How to use:</h3>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span data-i18n="tip1">Copy generated JSON</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span data-i18n="tip2">Open <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">snippets.json</code> in VS Code</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span data-i18n="tip3">Paste snippet into file</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span data-i18n="tip4">Save file (<code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">Cmd+S</code>)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span data-i18n="tip5">Snippet ready to use!</span>
+                        </li>
+                    </ul>
+                </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+        // Мультимовність
+        let currentLang = 'en';
+        
+        const translations = {
+            en: {
+                title: 'Snippet Generator',
+                subtitle: 'Create snippets for Code Snippets Inserter VS Code extension',
+                formTitle: '✏️ Enter snippet data',
+                nameLabel: 'Snippet name:',
+                namePlaceholder: 'e.g.: HTML5 Template',
+                nameHint: 'Unique name for your snippet',
+                codeLabel: 'Snippet code:',
+                codePlaceholder: 'Enter your code here...\\nUse ${1:placeholder} for tab stops\\nNew lines will be automatically escaped',
+                codeHint: 'Regular code - special characters will be escaped automatically',
+                descLabel: 'Description:',
+                descPlaceholder: 'e.g.: Basic HTML5 template',
+                descHint: 'Short description of what the snippet does',
+                btnGenerate: '🚀 Generate JSON',
+                btnClear: '🗑️ Clear form',
+                examplesTitle: 'Examples:',
+                placeholdersTitle: '💡 About Placeholders',
+                placeholder1: '- first tab position',
+                placeholder2: '- second position',
+                placeholder0: '- final cursor position',
+                resultTitle: '📋 JSON Result',
+                btnCopy: '📋 Copy',
+                btnCopied: '✅ Copied!',
+                resultEmpty: 'JSON will appear here after generation...',
+                successMsg: '✅ Copied to clipboard!',
+                tipsTitle: '💡 How to use:',
+                tip1: 'Copy generated JSON',
+                tip2: 'Open <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">snippets.json</code> in VS Code',
+                tip3: 'Paste snippet into file',
+                tip4: 'Save file (<code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">Cmd+S</code>)',
+                tip5: 'Snippet ready to use!',
+                alertNoName: '⚠️ Please enter snippet name!',
+                alertNoCode: '⚠️ Please enter snippet code!'
+            },
+            uk: {
+                title: 'Генератор Snippets',
+                subtitle: 'Створюйте snippets для Code Snippets Inserter VS Code розширення',
+                formTitle: '✏️ Введіть дані snippet',
+                nameLabel: 'Назва snippet:',
+                namePlaceholder: 'наприклад: HTML5 Template',
+                nameHint: 'Унікальна назва для вашого snippet',
+                codeLabel: 'Код snippet:',
+                codePlaceholder: 'Введіть ваш код тут...\\nВикористовуйте ${1:placeholder} для табуляції\\nНові рядки будуть автоматично екрановані',
+                codeHint: 'Звичайний код - спецсимволи будуть екрановані автоматично',
+                descLabel: 'Опис:',
+                descPlaceholder: 'наприклад: Базовий HTML5 шаблон',
+                descHint: 'Короткий опис що робить snippet',
+                btnGenerate: '🚀 Згенерувати JSON',
+                btnClear: '🗑️ Очистити форму',
+                examplesTitle: 'Приклади:',
+                placeholdersTitle: '💡 Про Placeholders',
+                placeholder1: '- перша позиція табуляції',
+                placeholder2: '- друга позиція',
+                placeholder0: '- фінальна позіція курсора',
+                resultTitle: '📋 Результат JSON',
+                btnCopy: '📋 Копіювати',
+                btnCopied: '✅ Скопійовано!',
+                resultEmpty: 'JSON з\'явиться тут після генерації...',
+                successMsg: '✅ Скопійовано в буфер обміну!',
+                tipsTitle: '💡 Як використовувати:',
+                tip1: 'Скопіюйте згенерований JSON',
+                tip2: 'Відкрийте <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">snippets.json</code> у VS Code',
+                tip3: 'Вставте snippet в файл',
+                tip4: 'Збережіть файл (<code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">Cmd+S</code>)',
+                tip5: 'Snippet одразу доступний!',
+                alertNoName: '⚠️ Будь ласка, введіть назву snippet!',
+                alertNoCode: '⚠️ Будь ласка, введіть код snippet!'
+            },
+            ru: {
+                title: 'Генератор Snippets',
+                subtitle: 'Создавайте сниппеты для Code Snippets Inserter VS Code расширения',
+                formTitle: '✏️ Введите данные сниппета',
+                nameLabel: 'Название сниппета:',
+                namePlaceholder: 'например: HTML5 Template',
+                nameHint: 'Уникальное название для вашего сниппета',
+                codeLabel: 'Код сниппета:',
+                codePlaceholder: 'Введите ваш код здесь...\\nИспользуйте ${1:placeholder} для табуляции\\nНовые строки будут автоматически экранированы',
+                codeHint: 'Обычный код - спецсимволы будут экранированы автоматически',
+                descLabel: 'Описание:',
+                descPlaceholder: 'например: Базовый HTML5 шаблон',
+                descHint: 'Краткое описание что делает сниппет',
+                btnGenerate: '🚀 Сгенерировать JSON',
+                btnClear: '🗑️ Очистить форму',
+                examplesTitle: 'Примеры:',
+                placeholdersTitle: '💡 О Placeholders',
+                placeholder1: '- первая позиция табуляции',
+                placeholder2: '- вторая позиция',
+                placeholder0: '- финальная позиция курсора',
+                resultTitle: '📋 Результат JSON',
+                btnCopy: '📋 Копировать',
+                btnCopied: '✅ Скопировано!',
+                resultEmpty: 'JSON появится здесь после генерации...',
+                successMsg: '✅ Скопировано в буфер обмена!',
+                tipsTitle: '💡 Как использовать:',
+                tip1: 'Скопируйте сгенерированный JSON',
+                tip2: 'Откройте <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">snippets.json</code> в VS Code',
+                tip3: 'Вставьте сниппет в файл',
+                tip4: 'Сохраните файл (<code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">Cmd+S</code>)',
+                tip5: 'Сниппет сразу доступен!',
+                alertNoName: '⚠️ Пожалуйста, введите название сниппета!',
+                alertNoCode: '⚠️ Пожалуйста, введите код сниппета!'
+            }
+        };
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('[id^="lang-"]').forEach(btn => {
+                btn.classList.remove('bg-sky-600', 'border-sky-500', 'text-white');
+                btn.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-300');
+            });
+            document.getElementById(`lang-${lang}`).classList.remove('bg-slate-800', 'border-slate-700', 'text-slate-300');
+            document.getElementById(`lang-${lang}`).classList.add('bg-sky-600', 'border-sky-500', 'text-white');
+            
+            // Обновляем тексты
+            const t = translations[lang];
+            document.querySelector('[data-i18n="title"]').textContent = t.title;
+            document.querySelector('[data-i18n="subtitle"]').textContent = t.subtitle;
+            document.querySelector('[data-i18n="formTitle"]').textContent = t.formTitle;
+            document.querySelector('[data-i18n="nameLabel"]').textContent = t.nameLabel;
+            document.getElementById('snippetName').placeholder = t.namePlaceholder.replace(/\\n/g, '\\n');
+            document.querySelector('[data-i18n="nameHint"]').textContent = t.nameHint;
+            document.querySelector('[data-i18n="codeLabel"]').textContent = t.codeLabel;
+            document.getElementById('snippetCode').placeholder = t.codePlaceholder.replace(/\\\\n/g, '\\n');
+            document.querySelector('[data-i18n="codeHint"]').textContent = t.codeHint;
+            document.querySelector('[data-i18n="descLabel"]').textContent = t.descLabel;
+            document.getElementById('snippetDescription').placeholder = t.descPlaceholder;
+            document.querySelector('[data-i18n="descHint"]').textContent = t.descHint;
+            document.querySelector('[data-i18n="btnGenerate"]').textContent = t.btnGenerate;
+            document.querySelector('[data-i18n="btnClear"]').textContent = t.btnClear;
+            document.querySelector('[data-i18n="examplesTitle"]').textContent = t.examplesTitle;
+            document.querySelector('[data-i18n="placeholdersTitle"]').textContent = t.placeholdersTitle;
+            document.querySelector('[data-i18n="placeholder1"]').textContent = t.placeholder1;
+            document.querySelector('[data-i18n="placeholder2"]').textContent = t.placeholder2;
+            document.querySelector('[data-i18n="placeholder0"]').textContent = t.placeholder0;
+            document.querySelector('[data-i18n="resultTitle"]').textContent = t.resultTitle;
+            document.getElementById('copyBtn').innerHTML = t.btnCopy;
+            
+            const resultEmpty = document.querySelector('[data-i18n="resultEmpty"]');
+            if (resultEmpty) resultEmpty.textContent = t.resultEmpty;
+            
+            const successMsg = document.getElementById('successMsg');
+            if (successMsg) successMsg.textContent = t.successMsg;
+            
+            document.querySelector('[data-i18n="tipsTitle"]').textContent = t.tipsTitle;
+            document.querySelector('[data-i18n="tip1"]').textContent = t.tip1;
+            document.querySelector('[data-i18n="tip2"]').innerHTML = t.tip2;
+            document.querySelector('[data-i18n="tip3"]').textContent = t.tip3;
+            document.querySelector('[data-i18n="tip4"]').innerHTML = t.tip4;
+            document.querySelector('[data-i18n="tip5"]').textContent = t.tip5;
+            
+            // Сохраняем выбор в localStorage
+            localStorage.setItem('snippetGeneratorLang', lang);
+        }
+        
+        // Определяем язык при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Додаємо обробники подій для кнопок мови
+            document.getElementById('lang-en').addEventListener('click', function() { setLanguage('en'); });
+            document.getElementById('lang-uk').addEventListener('click', function() { setLanguage('uk'); });
+            document.getElementById('lang-ru').addEventListener('click', function() { setLanguage('ru'); });
+            
+            // Додаємо обробники для основних кнопок
+            document.getElementById('btnGenerateSnippet').addEventListener('click', generateSnippet);
+            document.getElementById('btnClearForm').addEventListener('click', clearForm);
+            document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+            
+            // Додаємо обробники для прикладів
+            document.querySelectorAll('[data-example]').forEach(function(elem) {
+                elem.addEventListener('click', function() {
+                    loadExample(this.getAttribute('data-example'));
+                });
+            });
+            
+            const savedLang = localStorage.getItem('snippetGeneratorLang');
+            const browserLang = navigator.language || navigator.userLanguage;
+            
+            let detectedLang = 'en';
+            if (savedLang) {
+                detectedLang = savedLang;
+            } else if (browserLang.startsWith('uk')) {
+                detectedLang = 'uk';
+            } else if (browserLang.startsWith('ru')) {
+                detectedLang = 'ru';
+            }
+            
+            setLanguage(detectedLang);
+        });
+
+        // Глобальная переменная для хранения сгенерированного JSON
+        let generatedJSON = '';
+
+        // Функция экранирования специальных символов для JSON
+        function escapeJSON(str) {
+            return str
+                .replace(/\\/g, '\\\\')
+                .replace(/"/g, '\\"')
+                .replace(/\$/g, '\\$')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r')
+                .replace(/\t/g, '\\t');
+        }
+
+        // Генерация snippet JSON
+        function generateSnippet() {
+            const t = translations[currentLang];
+            const name = document.getElementById('snippetName').value.trim();
+            const code = document.getElementById('snippetCode').value;
+            const description = document.getElementById('snippetDescription').value.trim();
+
+            if (!name) {
+                alert(t.alertNoName);
+                return;
+            }
+
+            if (!code) {
+                alert(t.alertNoCode);
+                return;
+            }
+
+            const escapedCode = escapeJSON(code);
+
+            const snippet = {
+                [name]: {
+                    code: escapedCode,
+                    description: description || 'Snippet без опису'
+                }
+            };
+
+            // Генеруємо повний JSON для відображення
+            const fullJSON = JSON.stringify(snippet, null, 2);
+            
+            // Для копіювання - тільки внутрішня частина (без зовнішніх дужок)
+            const snippetContent = JSON.stringify(snippet[name], null, 2);
+            const snippetLine = `"${name}": ${snippetContent}`;
+            
+            // Зберігаємо тільки внутрішню частину для копіювання
+            generatedJSON = snippetLine;
+
+            const resultArea = document.getElementById('result');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            // Очищаємо вміст
+            resultArea.innerHTML = '';
+            
+            // Додаємо кнопку копіювання
+            copyBtn.style.display = 'block';
+            copyBtn.innerHTML = translations[currentLang].btnCopy;
+            copyBtn.classList.remove('copied');
+            resultArea.appendChild(copyBtn);
+            
+            // Показуємо повний JSON для перегляду, але копіюємо тільки внутрішню частину
+            const pre = document.createElement('pre');
+            pre.className = 'text-sky-400';
+            pre.textContent = fullJSON;
+            resultArea.appendChild(pre);
+        }
+
+        // Копирование в буфер обмена
+        function copyToClipboard() {
+            const t = translations[currentLang];
+            const copyBtn = document.getElementById('copyBtn');
+
+            // Копируем JSON из глобальной переменной
+            navigator.clipboard.writeText(generatedJSON).then(function() {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = t.btnCopied;
+                copyBtn.classList.add('copied');
+                
+                // Показываем сообщение
+                const successMsg = document.getElementById('successMsg');
+                successMsg.textContent = t.successMsg;
+                successMsg.style.display = 'block';
+                
+                // Возвращаем кнопку в исходное состояние
+                setTimeout(function() {
+                    copyBtn.innerHTML = t.btnCopy;
+                    copyBtn.classList.remove('copied');
+                    successMsg.style.display = 'none';
+                }, 2000);
+            }).catch(function(err) {
+                copyBtn.innerHTML = '❌ Error';
+                setTimeout(function() {
+                    copyBtn.innerHTML = t.btnCopy;
+                }, 2000);
+                console.error('Copy error:', err);
+            });
+        }
+
+        // Очистка формы
+        function clearForm() {
+            const t = translations[currentLang];
+            document.getElementById('snippetName').value = '';
+            document.getElementById('snippetCode').value = '';
+            document.getElementById('snippetDescription').value = '';
+            
+            // Очищаем глобальную переменную с JSON
+            generatedJSON = '';
+            
+            const resultArea = document.getElementById('result');
+            resultArea.innerHTML = '<span class="text-slate-600 italic flex items-center justify-center h-full" data-i18n="resultEmpty">' + t.resultEmpty + '</span>';
+            document.getElementById('copyBtn').style.display = 'none';
+        }
+
+        // Загрузка примеров
+        function loadExample(type) {
+            const examples = {
+                html: {
+                    name: 'HTML5 Template',
+                    code: '<!DOCTYPE html>\n<html lang="uk">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>${1:Document}</title>\n</head>\n<body>\n    ${2:<!-- content -->}\n</body>\n</html>',
+                    description: 'Базовий HTML5 шаблон з placeholders'
+                },
+                php: {
+                    name: 'PHP Class',
+                    code: '<?php\n\nnamespace App\\\\${1:Models};\n\nclass ${2:ClassName}\n{\n    public function __construct()\n    {\n        ${0:// constructor}\n    }\n}',
+                    description: 'PHP клас з namespace'
+                },
+                react: {
+                    name: 'React Functional Component',
+                    code: 'import React from \'react\';\n\nconst ${1:ComponentName} = () => {\n    return (\n        <div className="${2:container}">\n            ${3:<!-- content -->}\n        </div>\n    );\n};\n\nexport default ${1:ComponentName};',
+                    description: 'React функціональний компонент'
+                },
+                vue: {
+                    name: 'Vue Component',
+                    code: '<template>\n  <div class="${1:component-name}">\n    ${2:content}\n  </div>\n</template>\n\n<script>\nexport default {\n  name: \'${1:ComponentName}\',\n  data() {\n    return {\n      ${0}\n    }\n  }\n}\n<\/script>\n\n<style scoped>\n.${1:component-name} {\n  /* styles */\n}\n</style>',
+                    description: 'Vue компонента з автозаміною імені'
+                }
+            };
+
+            const example = examples[type];
+            if (example) {
+                document.getElementById('snippetName').value = example.name;
+                document.getElementById('snippetCode').value = example.code;
+                document.getElementById('snippetDescription').value = example.description;
+            }
+        }
+
+        // Горячие клавиши
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                generateSnippet();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                clearForm();
+            }
+        });
+    </script>
+</body>
+</html>

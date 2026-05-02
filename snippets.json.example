@@ -1,0 +1,50 @@
+{
+  "HTML Шаблон": {
+    "code": "<!DOCTYPE html>\n<html lang=\"uk\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>${1:Document}</title>\n</head>\n<body>\n    ${2:<!-- content -->}\n</body>\n</html>",
+    "description": "Базовий HTML5 шаблон"
+  },
+  "CSS Flexbox": {
+    "code": ".${1:container} {\n    display: flex;\n    justify-content: ${2:center};\n    align-items: ${3:center};\n}",
+    "description": "Flexbox контейнер"
+  },
+  "JS Function": {
+    "code": "function ${1:functionName}(${2:params}) {\n    ${3:// code}\n    return ${0};\n}",
+    "description": "JavaScript функція з табстопами"
+  },
+  "Arrow Function": {
+    "code": "const ${1:name} = (${2:params}) => {\n    ${3:// code}\n};",
+    "description": "ES6 стрілкова функція"
+  },
+  "PHP Class": {
+    "code": "<?php\n\nclass ${1:ClassName}\n{\n    public function __construct()\n    {\n        ${2:// Constructor}\n    }\n    \n    public function ${3:methodName}()\n    {\n        ${0:// code}\n    }\n}",
+    "description": "PHP клас з конструктором"
+  },
+  "React Component": {
+    "code": "import React from 'react';\n\nconst ${1:ComponentName} = () => {\n    return (\n        <div>\n            ${2:<!-- content -->}\n        </div>\n    );\n};\n\nexport default ${1:ComponentName};",
+    "description": "React функціональний компонент"
+  },
+  "jQuery AJAX": {
+    "code": "$.ajax({\n    url: '${1:url}',\n    type: '${2:POST}',\n    data: ${3:data},\n    success: function(response) {\n        ${4:// success}\n    },\n    error: function(xhr, status, error) {\n        ${5:// error}\n    }\n});",
+    "description": "jQuery AJAX запит"
+  },
+  "Gulp Task": {
+    "code": "function ${1:taskName}() {\n    return src('${2:src/**/*}')\n        .pipe(${3:plugin}())\n        .pipe(dest('${4:dist}'));\n}\n\nexports.${1:taskName} = ${1:taskName};",
+    "description": "Gulp 5 задача"
+  },
+  "SCSS Mixin": {
+    "code": "@mixin ${1:mixinName}(${2:$param}) {\n    ${3:// styles}\n}\n\n.${4:selector} {\n    @include ${1:mixinName}(${5:value});\n}",
+    "description": "SCSS міксин з використанням"
+  },
+  "Laravel Route": {
+    "code": "Route::${1:get}('/${2:path}', [${3:Controller}::class, '${4:method}'])->name('${5:route.name}');",
+    "description": "Laravel маршрут з контролером"
+  },
+  "Telegram Bot Send": {
+    "code": "$message = \"${1:message}\";\n$botToken = '${2:BOT_TOKEN}';\n$chatId = '${3:CHAT_ID}';\n\n$url = \"https://api.telegram.org/bot\" . $botToken . \"/sendMessage\";\n$data = [\n    'chat_id' => $chatId,\n    'text' => $message,\n    'parse_mode' => 'HTML'\n];\n\nfile_get_contents($url . '?' . http_build_query($data));",
+    "description": "Відправка повідомлення через Telegram Bot API"
+  },
+  "Vue Component": {
+    "code": "<template>\n  <div class=\"${1:component-name}\">\n    ${2:<!-- content -->}\n  </div>\n</template>\n\n<script>\nexport default {\n  name: '${1:ComponentName}',\n  data() {\n    return {\n      ${3:// data}\n    }\n  }\n}\n</script>\n\n<style scoped>\n.${1:component-name} {\n  ${4:// styles}\n}\n</style>",
+    "description": "Vue Single File Component"
+  }
+}

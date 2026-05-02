@@ -1,0 +1,27 @@
+{
+  "extension.displayName": "Code Snippets Inserter",
+  "extension.description": "Quick code snippet insertion. Snippets are stored in a separate JSON file.",
+  
+  "command.insertSnippet.title": "Insert Code Snippet",
+  "command.insertSnippet.category": "Code Snippets",
+  
+  "command.openSnippetsFile.title": "Open snippets.json File",
+  "command.openSnippetsFile.category": "Code Snippets",
+  
+  "command.openSnippetsFolder.title": "Open Snippets Folder",
+  "command.openSnippetsFolder.category": "Code Snippets",
+  
+  "view.title": "Code Snippets",
+  "view.name": "My Snippets",
+  
+  "message.noEditor": "Open a file to insert code",
+  "message.noSnippets": "No snippets configured. Open snippets.json file?",
+  "message.openFile": "Open",
+  "message.cancel": "Cancel",
+  "message.selectSnippet": "Select a snippet to insert",
+  "message.fileCreated": "snippets.json file created at:",
+  "message.openInEditor": "Open snippets.json in editor",
+  "message.snippetInserted": "Snippet inserted successfully!",
+  "message.insertionFailed": "Failed to insert snippet",
+  "message.noDescription": "Snippet without description"
+}

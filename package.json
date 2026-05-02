@@ -1,0 +1,99 @@
+{
+  "name": "code-snippets-inserter",
+  "displayName": "%extension.displayName%",
+  "description": "%extension.description%",
+  "version": "3.0.2",
+  "publisher": "wpdews",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "snippets",
+    "code",
+    "insert",
+    "templates",
+    "productivity"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeSnippetsInserter.insertSnippet",
+        "title": "%command.insertSnippet.title%",
+        "category": "%command.insertSnippet.category%"
+      },
+      {
+        "command": "codeSnippetsInserter.openSnippetsFile",
+        "title": "%command.openSnippetsFile.title%",
+        "category": "%command.openSnippetsFile.category%"
+      },
+      {
+        "command": "codeSnippetsInserter.openSnippetsFolder",
+        "title": "%command.openSnippetsFolder.title%",
+        "category": "%command.openSnippetsFolder.category%"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "codeSnippetsInserter.insertSnippet",
+          "group": "navigation",
+          "when": "editorTextFocus"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeSnippetsExplorer",
+          "title": "%view.title%",
+          "icon": "images/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeSnippetsExplorer": [
+        {
+          "id": "codeSnippetsTreeView",
+          "name": "%view.name%"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "codeSnippetsInserter.insertSnippet",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "16.x",
+    "eslint": "^8.41.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wpdews/code-snippets-inserter.git"
+  },
+  "license": "MIT",
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/wpdews/code-snippets-inserter/issues"
+  },
+  "homepage": "https://github.com/wpdews/code-snippets-inserter#readme"
+}

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор Snippets - Code Snippets Inserter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fadeIn': 'fadeIn 0.3s ease-out',
+                        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes pulse-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .copied {
+            animation: pulse-scale 0.5s;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 p-4 sm:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Language Switcher -->
+        <div class="flex justify-end gap-2 mb-4">
+            <button onclick="setLanguage('en')" id="lang-en" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all text-sm">
+                🇬🇧 EN
+            </button>
+            <button onclick="setLanguage('uk')" id="lang-uk" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all text-sm">
+                🇺🇦 UA
+            </button>
+            <button onclick="setLanguage('ru')" id="lang-ru" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all text-sm">
+                🇷🇺 RU
+            </button>
+        </div>
+
+        <!-- Header -->
+        <header class="text-center mb-8 sm:mb-12">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-white via-sky-200 to-sky-400 bg-clip-text text-transparent">
+                📝 <span data-i18n="title">Snippet Generator</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-slate-400" data-i18n="subtitle">
+                Create snippets for Code Snippets Inserter VS Code extension
+            </p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Left Card - Form -->
+            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-8 hover:border-sky-500/50 transition-all duration-300">
+                <h2 class="text-2xl font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                    ✏️ Введіть дані snippet
+                </h2>
+                
+                <!-- Snippet Name -->
+                <div class="mb-6">
+                    <label for="snippetName" class="block text-sm font-semibold text-slate-300 mb-2">
+                        Назва snippet:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="snippetName" 
+                        placeholder="наприклад: HTML5 Template"
+                        class="w-full px-4 py-3 bg-slate-800 border-2 border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 outline-none transition-all duration-200"
+                    >
+                    <p class="mt-2 text-xs text-slate-500 italic">Унікальна назва для вашого snippet</p>
+                </div>
+
+                <!-- Snippet Code -->
+                <div class="mb-6">
+                    <label for="snippetCode" class="block text-sm font-semibold text-slate-300 mb-2">
+                        Код snippet:
+                    </label>
+                    <textarea 
+                        id="snippetCode" 
+                        placeholder="Введіть ваш код тут...&#10;Використовуйте ${1:placeholder} для табуляції&#10;Нові рядки будуть автоматично екрановані"
+                        class="w-full px-4 py-3 bg-slate-800 border-2 border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 outline-none transition-all duration-200 font-mono text-sm min-h-[180px] resize-y"
+                    ></textarea>
+                    <p class="mt-2 text-xs text-slate-500 italic">Звичайний код - спецсимволи будуть екрановані автоматично</p>
+                </div>
+
+                <!-- Snippet Description -->
+                <div class="mb-6">
+                    <label for="snippetDescription" class="block text-sm font-semibold text-slate-300 mb-2">
+                        Опис:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="snippetDescription" 
+                        placeholder="наприклад: Базовий HTML5 шаблон"
+                        class="w-full px-4 py-3 bg-slate-800 border-2 border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 outline-none transition-all duration-200"
+                    >
+                    <p class="mt-2 text-xs text-slate-500 italic">Короткий опис що робить snippet</p>
+                </div>
+
+                <!-- Buttons -->
+                <button 
+                    onclick="generateSnippet()" 
+                    class="w-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-sky-500/30 hover:shadow-sky-500/50 transform hover:-translate-y-0.5 transition-all duration-200 mb-3"
+                >
+                    🚀 Згенерувати JSON
+                </button>
+                <button 
+                    onclick="clearForm()" 
+                    class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-300 font-semibold py-3 px-6 rounded-xl shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
+                >
+                    🗑️ Очистити форму
+                </button>
+
+                <!-- Examples -->
+                <div class="mt-6">
+                    <h3 class="text-sm font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-3">
+                        Приклади:
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span onclick="loadExample('html')" class="inline-block bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-sky-500/50 text-slate-300 hover:text-sky-400 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium">
+                            HTML Template
+                        </span>
+                        <span onclick="loadExample('php')" class="inline-block bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-sky-500/50 text-slate-300 hover:text-sky-400 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium">
+                            PHP Class
+                        </span>
+                        <span onclick="loadExample('react')" class="inline-block bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-sky-500/50 text-slate-300 hover:text-sky-400 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium">
+                            React Component
+                        </span>
+                        <span onclick="loadExample('vue')" class="inline-block bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-sky-500/50 text-slate-300 hover:text-sky-400 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 text-sm font-medium">
+                            Vue Component
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Placeholder Info -->
+                <div class="mt-6 bg-sky-950/50 border border-sky-900/50 p-4 rounded-xl backdrop-blur-sm">
+                    <h3 class="font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-2">💡 Про Placeholders</h3>
+                    <p class="text-sm text-slate-400 mb-1">
+                        <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">${1:назва}</code> - перша позиція табуляції
+                    </p>
+                    <p class="text-sm text-slate-400 mb-1">
+                        <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">${2:значення}</code> - друга позиція
+                    </p>
+                    <p class="text-sm text-slate-400">
+                        <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">${0}</code> - фінальна позиція курсора
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Card - Result -->
+            <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-8 hover:border-sky-500/50 transition-all duration-300">
+                <h2 class="text-2xl font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                    📋 Результат JSON
+                </h2>
+                
+                <!-- Result Area -->
+                <div class="relative">
+                    <div id="result" class="bg-slate-950/50 border-2 border-slate-800 rounded-xl p-4 pt-14 font-mono text-xs sm:text-sm min-h-[200px] max-h-[400px] overflow-y-auto whitespace-pre-wrap break-all">
+                        <button 
+                            id="copyBtn" 
+                            onclick="copyToClipboard()" 
+                            style="display: none;"
+                            class="absolute top-3 right-3 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg shadow-sky-500/30 hover:shadow-sky-500/50 transform hover:-translate-y-0.5 transition-all duration-200 z-10 text-sm"
+                        >
+                            📋 Копіювати
+                        </button>
+                        <span class="text-slate-600 italic flex items-center justify-center h-full">JSON з'явиться тут після генерації...</span>
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div 
+                    id="successMsg" 
+                    style="display: none;"
+                    class="mt-4 bg-emerald-950/50 border border-emerald-800 text-emerald-400 px-4 py-3 rounded-xl animate-fadeIn backdrop-blur-sm"
+                >
+                    ✅ Скопійовано в буфер обміну!
+                </div>
+
+                <!-- Tips -->
+                <div class="mt-6 bg-amber-950/30 border border-amber-900/50 p-4 rounded-xl backdrop-blur-sm">
+                    <h3 class="font-bold bg-gradient-to-r from-white to-sky-400 bg-clip-text text-transparent mb-3 text-lg">💡 Як використовувати:</h3>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span>Скопіюйте згенерований JSON</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span>Відкрийте <code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">snippets.json</code> у VS Code</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span>Вставте snippet в файл</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span>Збережіть файл (<code class="bg-slate-800 text-sky-400 px-2 py-0.5 rounded text-xs">Cmd+S</code>)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 text-sky-500">•</span>
+                            <span>Snippet одразу доступний!</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+        // Глобальна змінна для збереження згенерованого JSON
+        let generatedJSON = '';
+
+        // Функция экранирования специальных символов для JSON
+        function escapeJSON(str) {
+            return str
+                .replace(/\\/g, '\\\\')
+                .replace(/"/g, '\\"')
+                .replace(/\$/g, '\\$')  // Екрануємо $ для PHP змінних!
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r')
+                .replace(/\t/g, '\\t');
+        }
+
+        // Генерация snippet JSON
+        function generateSnippet() {
+            const name = document.getElementById('snippetName').value.trim();
+            const code = document.getElementById('snippetCode').value;
+            const description = document.getElementById('snippetDescription').value.trim();
+
+            if (!name) {
+                alert('⚠️ Будь ласка, введіть назву snippet!');
+                return;
+            }
+
+            if (!code) {
+                alert('⚠️ Будь ласка, введіть код snippet!');
+                return;
+            }
+
+            const escapedCode = escapeJSON(code);
+
+            const snippet = {
+                [name]: {
+                    code: escapedCode,
+                    description: description || 'Snippet без опису'
+                }
+            };
+
+            // Генеруємо повний JSON для відображення
+            const fullJSON = JSON.stringify(snippet, null, 2);
+            
+            // Для копіювання - тільки внутрішня частина (без зовнішніх дужок)
+            const snippetContent = JSON.stringify(snippet[name], null, 2);
+            const snippetLine = `"${name}": ${snippetContent}`;
+            
+            // Зберігаємо тільки внутрішню частину для копіювання
+            generatedJSON = snippetLine;
+
+            const resultArea = document.getElementById('result');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            // Очищаємо вміст
+            resultArea.innerHTML = '';
+            
+            // Додаємо кнопку копіювання
+            copyBtn.style.display = 'block';
+            copyBtn.innerHTML = '📋 Копіювати';
+            copyBtn.classList.remove('copied');
+            resultArea.appendChild(copyBtn);
+            
+            // Показуємо повний JSON для перегляду, але копіюємо тільки внутрішню частину
+            const pre = document.createElement('pre');
+            pre.className = 'text-sky-400';
+            pre.textContent = fullJSON;
+            resultArea.appendChild(pre);
+        }
+
+        // Копирование в буфер обмена
+        function copyToClipboard() {
+            const copyBtn = document.getElementById('copyBtn');
+
+            // Копіюємо JSON з глобальної змінної (без тексту кнопки!)
+            navigator.clipboard.writeText(generatedJSON).then(function() {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Скопійовано!';
+                copyBtn.classList.add('copied');
+                
+                // Показываем сообщение
+                const successMsg = document.getElementById('successMsg');
+                successMsg.style.display = 'block';
+                
+                // Возвращаем кнопку в исходное состояние
+                setTimeout(function() {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('copied');
+                    successMsg.style.display = 'none';
+                }, 2000);
+            }).catch(function(err) {
+                copyBtn.innerHTML = '❌ Помилка';
+                setTimeout(function() {
+                    copyBtn.innerHTML = '📋 Копіювати';
+                }, 2000);
+                console.error('Помилка копіювання:', err);
+            });
+        }
+
+        // Очистка формы
+        function clearForm() {
+            document.getElementById('snippetName').value = '';
+            document.getElementById('snippetCode').value = '';
+            document.getElementById('snippetDescription').value = '';
+            
+            // Очищаємо глобальну змінну з JSON
+            generatedJSON = '';
+            
+            const resultArea = document.getElementById('result');
+            resultArea.innerHTML = '<span class="text-slate-600 italic flex items-center justify-center h-full">JSON з\'явиться тут після генерації...</span>';
+            document.getElementById('copyBtn').style.display = 'none';
+        }
+
+        // Загрузка примеров
+        function loadExample(type) {
+            const examples = {
+                html: {
+                    name: 'HTML5 Template',
+                    code: '<!DOCTYPE html>\n<html lang="uk">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>${1:Document}</title>\n</head>\n<body>\n    ${2:<!-- content -->}\n</body>\n</html>',
+                    description: 'Базовий HTML5 шаблон з placeholders'
+                },
+                php: {
+                    name: 'PHP Class',
+                    code: '<?php\n\nnamespace App\\\\${1:Models};\n\nclass ${2:ClassName}\n{\n    public function __construct()\n    {\n        ${0:// constructor}\n    }\n}',
+                    description: 'PHP клас з namespace'
+                },
+                react: {
+                    name: 'React Functional Component',
+                    code: 'import React from \'react\';\n\nconst ${1:ComponentName} = () => {\n    return (\n        <div className="${2:container}">\n            ${3:<!-- content -->}\n        </div>\n    );\n};\n\nexport default ${1:ComponentName};',
+                    description: 'React функціональний компонент'
+                },
+                vue: {
+                    name: 'Vue Component',
+                    code: '<template>\n  <div class="${1:component-name}">\n    ${2:content}\n  </div>\n</template>\n\n<script>\nexport default {\n  name: \'${1:ComponentName}\',\n  data() {\n    return {\n      ${0}\n    }\n  }\n}\n<\/script>\n\n<style scoped>\n.${1:component-name} {\n  /* styles */\n}\n</style>',
+                    description: 'Vue компонента з автозаміною імені'
+                }
+            };
+
+            const example = examples[type];
+            if (example) {
+                document.getElementById('snippetName').value = example.name;
+                document.getElementById('snippetCode').value = example.code;
+                document.getElementById('snippetDescription').value = example.description;
+            }
+        }
+
+        // Горячие клавиши
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                generateSnippet();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                clearForm();
+            }
+        });
+    </script>
+</body>
+</html>

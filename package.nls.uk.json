@@ -1,0 +1,27 @@
+{
+  "extension.displayName": "Code Snippets Inserter",
+  "extension.description": "Швидка вставка готових шматків коду. Snippets зберігаються в окремому JSON файлі.",
+  
+  "command.insertSnippet.title": "Вставити шматок коду",
+  "command.insertSnippet.category": "Code Snippets",
+  
+  "command.openSnippetsFile.title": "Відкрити файл snippets.json",
+  "command.openSnippetsFile.category": "Code Snippets",
+  
+  "command.openSnippetsFolder.title": "Відкрити папку зі snippets",
+  "command.openSnippetsFolder.category": "Code Snippets",
+  
+  "view.title": "Code Snippets",
+  "view.name": "Мої Snippets",
+  
+  "message.noEditor": "Відкрийте файл для вставки коду",
+  "message.noSnippets": "Немає налаштованих snippets. Відкрити файл snippets.json?",
+  "message.openFile": "Відкрити",
+  "message.cancel": "Скасувати",
+  "message.selectSnippet": "Оберіть snippet для вставки",
+  "message.fileCreated": "Файл snippets.json створено за адресою:",
+  "message.openInEditor": "Відкрити snippets.json в редакторі",
+  "message.snippetInserted": "Snippet успішно вставлено!",
+  "message.insertionFailed": "Не вдалося вставити snippet",
+  "message.noDescription": "Snippet без опису"
+}
