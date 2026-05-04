@@ -2,7 +2,7 @@
   "name": "code-snippets-inserter",
   "displayName": "%extension.displayName%",
   "description": "%extension.description%",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "publisher": "wpdews",
   "icon": "images/icon.png",
   "engines": {
@@ -88,12 +88,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wpdews/code-snippets-inserter.git"
+    "url": "git+https://github.com/wpdew/code-snippets-inserter.git"
   },
   "license": "MIT",
   "author": "",
   "bugs": {
-    "url": "https://github.com/wpdews/code-snippets-inserter/issues"
+    "url": "https://github.com/wpdew/code-snippets-inserter/issues"
   },
-  "homepage": "https://github.com/wpdews/code-snippets-inserter#readme"
+  "homepage": "https://github.com/wpdew/code-snippets-inserter#readme"
 }
